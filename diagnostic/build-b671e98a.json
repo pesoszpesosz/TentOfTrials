@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-06-18T20:18:52.903653+00:00",
+  "commit": "b671e98a",
+  "diagnostic_logd": [
+    "diagnostic\\build-b671e98a-part001.logd",
+    "diagnostic\\build-b671e98a-part002.logd",
+    "diagnostic\\build-b671e98a-part003.logd",
+    "diagnostic\\build-b671e98a-part004.logd",
+    "diagnostic\\build-b671e98a-part005.logd",
+    "diagnostic\\build-b671e98a-part006.logd",
+    "diagnostic\\build-b671e98a-part007.logd",
+    "diagnostic\\build-b671e98a-part008.logd",
+    "diagnostic\\build-b671e98a-part009.logd",
+    "diagnostic\\build-b671e98a-part010.logd"
+  ],
+  "diagnostic_logd_error": null,
+  "message_blocker": null,
+  "chunked": true,
+  "chunk_size_bytes": 41943040,
+  "password": "2646c77004cf73bcf179",
+  "decrypt_command": "encryptly unpack diagnostic\\build-b671e98a.logd <outdir> --password 2646c77004cf73bcf179",
+  "total_modules": 1,
+  "passed": 1,
+  "failed": 0,
+  "modules": [
+    {
+      "name": "market",
+      "status": "PASS",
+      "elapsed_seconds": 13.833,
+      "artifact": "E:\\profit-edge-lab\\worktrees\\lobster-trap-tentoftrials\\market\\market",
+      "output": ""
+    }
+  ],
+  "pr_note": "Include the encrypted diagnostic logd artifact(s): diagnostic\\build-b671e98a-part001.logd, diagnostic\\build-b671e98a-part002.logd, diagnostic\\build-b671e98a-part003.logd, diagnostic\\build-b671e98a-part004.logd, diagnostic\\build-b671e98a-part005.logd, diagnostic\\build-b671e98a-part006.logd, diagnostic\\build-b671e98a-part007.logd, diagnostic\\build-b671e98a-part008.logd, diagnostic\\build-b671e98a-part009.logd, diagnostic\\build-b671e98a-part010.logd. The encrypted .logd is the required diagnostic content for PR review; this JSON file is metadata. Maintainers may ask you to remove these diagnostic artifacts before merging."
+}

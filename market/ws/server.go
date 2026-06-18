@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"strconv"
 	"sync"
 	"time"
 
@@ -26,6 +28,7 @@ type Client struct {
 	send     chan []byte
 	subs     map[types.Symbol]struct{}
 	remote   string
+	lastPong time.Time
 	mu       sync.Mutex
 }
 
@@ -39,11 +42,12 @@ type Hub struct {
 }
 
 type Server struct {
-	hub    *Hub
-	engine *matching.MatchingEngine
-	logger *zap.Logger
-	port   int
-	srv    *http.Server
+	hub               *Hub
+	engine            *matching.MatchingEngine
+	logger            *zap.Logger
+	port              int
+	srv               *http.Server
+	heartbeatInterval time.Duration
 }
 
 func NewHub(logger *zap.Logger) *Hub {
@@ -97,11 +101,32 @@ func (h *Hub) Run() {
 
 func NewServer(hub *Hub, engine *matching.MatchingEngine, logger *zap.Logger, port int) *Server {
 	return &Server{
-		hub:    hub,
-		engine: engine,
-		logger: logger,
-		port:   port,
+		hub:               hub,
+		engine:            engine,
+		logger:            logger,
+		port:              port,
+		heartbeatInterval: heartbeatIntervalFromEnv(),
 	}
+}
+
+func heartbeatIntervalFromEnv() time.Duration {
+	const defaultInterval = 30 * time.Second
+	value := os.Getenv("WS_HEARTBEAT_INTERVAL_SECS")
+	if value == "" {
+		return defaultInterval
+	}
+
+	seconds, err := strconv.Atoi(value)
+	if err != nil || seconds <= 0 {
+		return defaultInterval
+	}
+	return time.Duration(seconds) * time.Second
+}
+
+func (h *Hub) ActiveConnectionCount() int {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	return len(h.clients)
 }
 
 func (s *Server) Start() error {
@@ -136,25 +161,27 @@ func (s *Server) handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	client := &Client{
-		hub:    s.hub,
-		conn:   conn,
-		send:   make(chan []byte, 256),
-		subs:   make(map[types.Symbol]struct{}),
-		remote: r.RemoteAddr,
+		hub:      s.hub,
+		conn:     conn,
+		send:     make(chan []byte, 256),
+		subs:     make(map[types.Symbol]struct{}),
+		remote:   r.RemoteAddr,
+		lastPong: time.Now(),
 	}
 
 	s.hub.register <- client
 
-	go client.writePump()
-	go client.readPump()
+	go client.writePump(s.heartbeatInterval)
+	go client.readPump(s.heartbeatInterval)
 }
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"status":  "ok",
-		"service": "tent-market",
-		"time":    time.Now().Unix(),
+		"status":             "ok",
+		"service":            "tent-market",
+		"time":               time.Now().Unix(),
+		"active_connections": s.hub.ActiveConnectionCount(),
 	})
 }
 
@@ -169,16 +196,20 @@ func (s *Server) handleGetDepth(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "depth endpoint"})
 }
 
-func (c *Client) readPump() {
+func (c *Client) readPump(heartbeatInterval time.Duration) {
 	defer func() {
 		c.hub.unregister <- c
 		c.conn.Close()
 	}()
 
+	idleTimeout := 2 * heartbeatInterval
 	c.conn.SetReadLimit(65536)
-	c.conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+	c.conn.SetReadDeadline(time.Now().Add(idleTimeout))
 	c.conn.SetPongHandler(func(string) error {
-		c.conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+		c.mu.Lock()
+		c.lastPong = time.Now()
+		c.mu.Unlock()
+		c.conn.SetReadDeadline(time.Now().Add(idleTimeout))
 		return nil
 	})
 
@@ -199,8 +230,8 @@ func (c *Client) readPump() {
 	}
 }
 
-func (c *Client) writePump() {
-	ticker := time.NewTicker(30 * time.Second)
+func (c *Client) writePump(heartbeatInterval time.Duration) {
+	ticker := time.NewTicker(heartbeatInterval)
 	defer func() {
 		ticker.Stop()
 		c.conn.Close()
@@ -219,6 +250,12 @@ func (c *Client) writePump() {
 			}
 
 		case <-ticker.C:
+			c.mu.Lock()
+			idleFor := time.Since(c.lastPong)
+			c.mu.Unlock()
+			if idleFor > 2*heartbeatInterval {
+				return
+			}
 			c.conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return

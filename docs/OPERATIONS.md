@@ -58,6 +58,17 @@ Key metrics to monitor:
 | `goroutine_count` | Gauge | Go routine count | > 5000 | > 10000 |
 | `gc_pause_time_ms` | Histogram | GC pause time | > 100ms | > 500ms |
 
+### WebSocket Heartbeats
+
+The Go market WebSocket server sends ping frames to connected clients on a
+heartbeat interval. The default interval is 30 seconds and can be adjusted with
+`WS_HEARTBEAT_INTERVAL_SECS`.
+
+Clients are expected to respond with pong frames. The server tracks the active
+connection count and each connection's last pong timestamp. A connection that
+does not respond within two heartbeat intervals is closed so dead clients do not
+linger indefinitely.
+
 ### Grafana Dashboards
 
 Pre-built Grafana dashboards are available:

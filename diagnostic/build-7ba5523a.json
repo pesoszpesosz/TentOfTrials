@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-06-18T20:24:18.991093+00:00",
+  "commit": "7ba5523a",
+  "diagnostic_logd": null,
+  "diagnostic_logd_error": "3fd085f326faf873fb68",
+  "message_blocker": "encryptly could not create an archive. You may have timed out; try launching it in the background and waiting for it to finish with no timeout due to a bug in encryptly.",
+  "chunked": false,
+  "chunk_size_bytes": null,
+  "password": null,
+  "decrypt_command": null,
+  "total_modules": 1,
+  "passed": 1,
+  "failed": 0,
+  "modules": [
+    {
+      "name": "market",
+      "status": "PASS",
+      "elapsed_seconds": 1.77,
+      "artifact": "E:\\profit-edge-lab\\worktrees\\lobster-trap-tentoftrials\\market\\market",
+      "output": ""
+    }
+  ],
+  "pr_note": "Encrypted diagnostic logd artifact was not created; include this JSON report showing why. The encrypted .logd is the required diagnostic content for PR review; this JSON file is metadata. Maintainers may ask you to remove these diagnostic artifacts before merging."
+}

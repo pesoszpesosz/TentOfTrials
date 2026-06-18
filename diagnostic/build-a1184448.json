@@ -1,0 +1,44 @@
+{
+  "generated_at": "2026-06-18T20:31:04.367688+00:00",
+  "commit": "a1184448",
+  "diagnostic_logd": [
+    "diagnostic/build-a1184448-part001.logd",
+    "diagnostic/build-a1184448-part002.logd",
+    "diagnostic/build-a1184448-part003.logd",
+    "diagnostic/build-a1184448-part004.logd",
+    "diagnostic/build-a1184448-part005.logd",
+    "diagnostic/build-a1184448-part006.logd",
+    "diagnostic/build-a1184448-part007.logd",
+    "diagnostic/build-a1184448-part008.logd",
+    "diagnostic/build-a1184448-part009.logd",
+    "diagnostic/build-a1184448-part010.logd",
+    "diagnostic/build-a1184448-part011.logd",
+    "diagnostic/build-a1184448-part012.logd",
+    "diagnostic/build-a1184448-part013.logd",
+    "diagnostic/build-a1184448-part014.logd",
+    "diagnostic/build-a1184448-part015.logd",
+    "diagnostic/build-a1184448-part016.logd",
+    "diagnostic/build-a1184448-part017.logd",
+    "diagnostic/build-a1184448-part018.logd",
+    "diagnostic/build-a1184448-part019.logd"
+  ],
+  "diagnostic_logd_error": null,
+  "message_blocker": null,
+  "chunked": true,
+  "chunk_size_bytes": 41943040,
+  "password": "42b1f0d3fd6e862a77af",
+  "decrypt_command": "encryptly unpack diagnostic/build-a1184448.logd <outdir> --password 42b1f0d3fd6e862a77af",
+  "total_modules": 1,
+  "passed": 1,
+  "failed": 0,
+  "modules": [
+    {
+      "name": "market",
+      "status": "PASS",
+      "elapsed_seconds": 1.446,
+      "artifact": "E:\\profit-edge-lab\\worktrees\\lobster-trap-tentoftrials\\market\\market",
+      "output": ""
+    }
+  ],
+  "pr_note": "Include the encrypted diagnostic logd artifact(s): diagnostic/build-a1184448-part001.logd, diagnostic/build-a1184448-part002.logd, diagnostic/build-a1184448-part003.logd, diagnostic/build-a1184448-part004.logd, diagnostic/build-a1184448-part005.logd, diagnostic/build-a1184448-part006.logd, diagnostic/build-a1184448-part007.logd, diagnostic/build-a1184448-part008.logd, diagnostic/build-a1184448-part009.logd, diagnostic/build-a1184448-part010.logd, diagnostic/build-a1184448-part011.logd, diagnostic/build-a1184448-part012.logd, diagnostic/build-a1184448-part013.logd, diagnostic/build-a1184448-part014.logd, diagnostic/build-a1184448-part015.logd, diagnostic/build-a1184448-part016.logd, diagnostic/build-a1184448-part017.logd, diagnostic/build-a1184448-part018.logd, diagnostic/build-a1184448-part019.logd. The encrypted .logd is the required diagnostic content for PR review; this JSON file is metadata. Maintainers may ask you to remove these diagnostic artifacts before merging."
+}
